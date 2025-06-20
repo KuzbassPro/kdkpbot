@@ -10,7 +10,7 @@ load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
 async def start_handler(update: Update, context: CallbackContext) -> None:
-    await update.message.reply_text("Привет! Бот работает на локальной машине!")
+    await update.message.reply_text("Привет! Бот работает!")
 
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
