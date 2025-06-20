@@ -71,4 +71,4 @@ jobs:
           script: |
             cd ~/kdkpbot
             git pull
-            bot-restart
+            sudo systemctl restart kdkpbot.service
