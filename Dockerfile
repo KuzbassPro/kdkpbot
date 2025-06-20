@@ -24,4 +24,4 @@ RUN poetry install --no-ansi --no-root
 COPY src/ ./src
 COPY tests/ ./tests
 
-CMD ["pytest"]
+CMD ["python", "src/kdkpbot/main.py"]
