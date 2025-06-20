@@ -4,8 +4,13 @@ import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+if Path(".env.local").exists():
+    load_dotenv(".env.local")
+else:
+    load_dotenv()
+
 TOKEN = os.getenv("BOT_TOKEN")
 
 async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

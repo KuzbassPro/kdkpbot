@@ -1,0 +1,6 @@
+# docker-compose.dev.yml
+
+services:
+  bot:
+    env_file:
+      - .env.local
