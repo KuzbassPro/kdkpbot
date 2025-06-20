@@ -11,9 +11,6 @@ venv/
 ENV/
 env/
 
-# Poetry
-poetry.lock
-
 # PyCharm / IntelliJ
 .idea/
 
