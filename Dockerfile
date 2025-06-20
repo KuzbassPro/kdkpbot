@@ -1,32 +1,27 @@
-# syntax=docker/dockerfile:1
-
 FROM python:3.11-slim
 
-# Обновим pip и установим curl
 RUN apt-get update && apt-get install -y curl && pip install --upgrade pip
 
-# Установим Poetry в /opt/poetry и добавим в PATH
+# Устанавливаем Poetry надёжно
 ENV POETRY_HOME="/opt/poetry"
 ENV PATH="${POETRY_HOME}/bin:${PATH}"
-ADD https://install.python-poetry.org install-poetry.py
-RUN python3 install-poetry.py
+ADD https://install.python-poetry.org /tmp/install-poetry.py
+RUN python3 /tmp/install-poetry.py && rm /tmp/install-poetry.py
 
-# Отключаем виртуальные окружения и интерактивный режим
+# Настройка Poetry
 ENV POETRY_VIRTUALENVS_CREATE=false
 ENV POETRY_NO_INTERACTION=1
 
-# Создаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы конфигурации poetry
-COPY pyproject.toml poetry.lock* ./
+# Копируем зависимости и README
+COPY pyproject.toml poetry.lock README.md ./
 
-# Устанавливаем зависимости
-RUN poetry install --no-ansi
+# Установка зависимостей
+RUN poetry install --no-ansi --no-root
 
-# Копируем исходники проекта
+# Копируем исходники
 COPY src/ ./src
 COPY tests/ ./tests
 
-# Стандартная команда по умолчанию
 CMD ["pytest"]
