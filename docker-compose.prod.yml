@@ -1,6 +1,0 @@
-# docker-compose.prod.yml
-
-services:
-  bot:
-    env_file:
-      - .env

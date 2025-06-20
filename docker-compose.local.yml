@@ -1,4 +1,4 @@
-# docker-compose.yml
+# docker-compose.local.yml
 
 services:
   bot:
@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env.local
     container_name: kdkpbot
     working_dir: /app
     volumes:
