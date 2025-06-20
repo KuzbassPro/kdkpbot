@@ -71,4 +71,5 @@ jobs:
           script: |
             cd ~/kdkpbot
             git pull
-            sudo systemctl restart kdkpbot.service
+            docker compose down
+            docker compose up -d --build
