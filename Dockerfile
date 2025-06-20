@@ -1,21 +1,32 @@
-# /Dockerfile
+# syntax=docker/dockerfile:1
 
 FROM python:3.11-slim
 
-# Устанавливаем Poetry
-RUN pip install --no-cache-dir poetry
+# Обновим pip и установим curl
+RUN apt-get update && apt-get install -y curl && pip install --upgrade pip
 
+# Установим Poetry в /opt/poetry и добавим в PATH
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="${POETRY_HOME}/bin:${PATH}"
+ADD https://install.python-poetry.org install-poetry.py
+RUN python3 install-poetry.py
+
+# Отключаем виртуальные окружения и интерактивный режим
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_NO_INTERACTION=1
+
+# Создаем рабочую директорию
 WORKDIR /app
 
-# Копируем зависимости и исходники заранее
-COPY pyproject.toml poetry.lock README.md /app/
-COPY ./src /app/src
+# Копируем файлы конфигурации poetry
+COPY pyproject.toml poetry.lock* ./
 
 # Устанавливаем зависимости
-RUN poetry config virtualenvs.create false \
- && poetry install --no-interaction --no-ansi
+RUN poetry install --no-ansi
 
-RUN ls -la /app/src/kdkpbot
+# Копируем исходники проекта
+COPY src/ ./src
+COPY tests/ ./tests
 
-# Команда запуска
-ENTRYPOINT ["poetry", "run", "python", "-u", "src/kdkpbot/main.py"]
+# Стандартная команда по умолчанию
+CMD ["pytest"]
