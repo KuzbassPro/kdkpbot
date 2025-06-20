@@ -32,3 +32,6 @@ coverage.*
 # Git
 *.swp
 *.swo
+
+deploy_key
+deploy_key.pub

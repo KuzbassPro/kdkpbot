@@ -1,6 +1,6 @@
 # .github/workflows/ci.yml
 
-name: CI
+name: CI & Deploy
 
 on:
   push:
@@ -30,28 +30,45 @@ jobs:
       DATABASE_URL: postgres://user:password@localhost:5432/test_db
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: Install dependencies
-      run: |
-        poetry config virtualenvs.create false
-        poetry install --no-interaction --no-ansi
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-interaction --no-ansi
 
-    - name: Wait for Postgres to be ready
-      run: |
-        until pg_isready -h localhost -p 5432; do echo "Waiting for postgres..."; sleep 1; done
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do echo "Waiting for postgres..."; sleep 1; done
 
-    - name: Run tests
-      run: |
-        pytest
+      - name: Run tests
+        run: |
+          pytest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' && success() }}
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 85.92.110.162
+          username: kdkpbot
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ~/kdkpbot
+            git pull
+            bot-restart
