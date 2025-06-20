@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: poetry run python src/kdkpbot/__init__.py
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
